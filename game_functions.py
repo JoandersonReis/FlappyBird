@@ -4,6 +4,7 @@ import pygame
 import sys
 from random import randint
 from time import sleep
+import json
 
 # Da um reset no game posicionando tudo no seu lugar de inicio
 def reset_game(gs, bird, canos, moeda, bau):
@@ -91,6 +92,13 @@ def check_collision_bird(bird, canos, screen, gs, sb):
         check_points(canos.rect_top, gs, bird, sb)
 
 
+# Salva dados
+def save(gs):
+    with open("settings.json", "w") as arquivo:
+        save = [gs.status_music, gs.status_sons, gs.skin1, gs.skin2, gs.skin1_active, gs.skin2_active, gs.skin_padrao_active, gs.moedas, gs.highscore]
+        json.dump(save, arquivo)
+
+
 # Função que checa o click no mouse
 def click_button(mouse_x, mouse_y, gs, bird, canos, menu, sb, moeda, bau):
     click_play = menu.play.collidepoint(mouse_x, mouse_y)
@@ -118,6 +126,7 @@ def click_button(mouse_x, mouse_y, gs, bird, canos, menu, sb, moeda, bau):
         if gs.status_sons:
             gs.canal_sons.play(gs.select)
     elif click_sair and gs.pause and not gs.menu_skin:
+        save(gs)
         sys.exit()
     # Pressiona o botão de music para ativar ou desativar a musica
     elif click_music and gs.pause:
@@ -245,6 +254,7 @@ def events(bird, gs, canos, menu, sb, moeda, bau):
     # Verifica os eventos do teclado e mouse
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                save(gs)
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -280,7 +290,7 @@ def update_screen(gs, canos, bird, sb, moeda, menu, screen, tela, conf, bau):
     canos.desenha()
 
     # Loop infinito da música carregada
-    if not pygame.mixer.music.get_busy():
+    if gs.status_music and not pygame.mixer.music.get_busy():
         pygame.mixer.music.play()
     
     # Esquema de pause

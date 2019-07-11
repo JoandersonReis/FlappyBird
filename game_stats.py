@@ -1,5 +1,6 @@
 import pygame.font
 from random import randint
+import json
 
 class GameStats():
 
@@ -7,8 +8,6 @@ class GameStats():
         self.reset_stats()
         # Status da música
         self.canal_sons = pygame.mixer.Channel(1)
-        self.status_music = True
-        self.status_sons = True
 
         self.music = pygame.mixer.music.load("sounds/music_menu.wav")
         self.buy_skin = pygame.mixer.Sound("sounds/buy_skin.wav")
@@ -18,16 +17,30 @@ class GameStats():
         self.catch_bau = pygame.mixer.Sound("sounds/catch_bau.wav")
         self.game_over = pygame.mixer.Sound("sounds/game_over.wav")
 
-        # Status do Player
-        self.skin1 = False
-        self.skin2 = False
-        self.skin1_active = False
-        self.skin2_active = False
-        self.skin_padrao_active = True
         self.price_skin1 = 500
         self.price_skin2 = 250
-        self.moedas = 0
-        self.highscore = 0
+
+        # Carrega ou cria arquivo de salvamento
+        try:
+            with open('settings.json') as arquivo:
+                save = json.load(arquivo)
+                self.status_music = save[0]
+                self.status_sons = save[1]
+                self.skin1 = save[2]
+                self.skin2 = save[3]
+                self.skin1_active = save[4]
+                self.skin2_active = save[5]
+                self.skin_padrao_active = save[6]
+                self.moedas = save[7]
+                self.highscore = save[8]
+
+        except:
+            with open('settings.json', 'w') as arquivo:
+                save = [self.status_music, self.status_sons, self.skin1, self.skin2, self.skin1_active, self.skin2_active, self.skin_padrao_active, self.moedas, self.highscore]
+                json.dump(save, arquivo)
+
+        if self.status_music:
+            pygame.mixer.music.play()
 
     def reset_stats(self):
         '''Status que serão resetados quando começar um novo jogo'''

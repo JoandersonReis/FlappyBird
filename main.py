@@ -21,9 +21,6 @@ def run():
     bau = Bau(screen, canos, gs)
     pygame.display.set_caption("Flappy Bird")
     clock = pygame.time.Clock()
-    
-    if gs.status_music:
-        pygame.mixer.music.play()
 
     while True:
         clock.tick(25)
